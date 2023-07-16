@@ -1,17 +1,35 @@
 const API_KEY = "76vsqdrUPTgUe94mFgmMg0nF7JI"
 const API_URL = "https://ci-jshint.herokuapp.com/api"
-// created the bootstrap modal once call apon
+
+// created the bootstrap modal once called apon
 const resultsModal = new bootstrap.Modal(document.getElementById("resultsModal"))
 
 // event listner for Check key button which calls getStatus
 document.getElementById("status").addEventListener("click", e => getStatus(e))
+
 // event listner for submit button which posts the form to the api
 document.getElementById("submit").addEventListener("click", e => postForm(e))
 
+// function that turns the data into a comma seperated list of options 
+function processOptions(form) {
+    let optArray = [];
+
+    for (let e of form.entries()) {
+        if (e[0] === "options") {
+            optArray.push(e[1]);
+        }
+    }
+
+    form.delete("options");
+
+    form.append("options", optArray.join());
+
+    return form;
+}
+
 //function to post the data to the API call per the documentation at https://ci-jshint.herokuapp.com/
 async function postForm(e) {
-    const form = new FormData(document.getElementById("checksform"))
-
+    const form = processOptions (new FormData(document.getElementById("checksform")))
 
     const response = await fetch(API_URL, {
                         method: "POST",
